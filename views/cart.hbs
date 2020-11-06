@@ -1,0 +1,28 @@
+<h1>Корзина</h1>
+<div id="cart">
+  {{#if courses.length}}
+  <table>
+    <thead>
+      <tr>
+        <th>Name:</th>
+        <th>Count:</th>
+        <th>Action:</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each courses}}
+      <tr>
+        <td>{{title}}</td>
+        <td>{{count}}</td>
+        {{!-- добавляем класс для удаления курса и id курса который нужно удалить (код прописан в папке public)--}}
+        <td><button class="btn btn-small js-remove" data-id="{{id}}">Remove</button></td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  <p><strong>Price: </strong><span class="price">{{price}}</span></p>
+  <form action="/orders" method="POST"><button type="submit" class="btn">Make order</button></form>
+  {{else}}
+  <p>Cart is empty</p>
+  {{/if }}
+</div>
