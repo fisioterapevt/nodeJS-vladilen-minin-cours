@@ -39,10 +39,17 @@ if ($cart) {
 		if (event.target.classList.contains("js-remove")) {
 			//- если содержит то забираем его id
 			const id = event.target.dataset.id;
+			//-забираем csrf
+			const csrf = event.target.dataset.csrf;
 			//- вызываем ajax запрос с клиента
 			fetch("/cart/remove/" + id, {
 				//- HTTP метод для удаления
 				method: "delete",
+				//-передаем хедер
+				headers: { "X-XSRF-TOKEN": csrf },
+				body: JSON.stringify({
+					_csrf: csrf,
+				}),
 			})
 				.then((res) => res.json())
 				.then((cart) => {

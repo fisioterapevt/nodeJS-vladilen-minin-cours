@@ -20,7 +20,10 @@
         {{!-- тк иначе isAuth будет искаться в courses а isAuth находится не в courses --}}
         <a href="/courses/{{id}}/edit?allow=true">Edit</a>
         <form action="/cart/add" method="POST">
+          {{!-- добавляем скрытый инпут для безопасности csurf --}}
+          <input type="hidden" name="_csrf" value="{{@root.csrf}}">
           <input type="hidden" name="id" value="{{id}}">
+
           <button type="submit" class="btn btn-primary">Buy</button>
         </form>
         {{/if}}

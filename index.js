@@ -1,5 +1,7 @@
 const express = require("express");
 const path = require("path");
+const csurf = require("csurf");
+const flash = require("connect-flash");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoStore = require("connect-mongodb-session")(session);
@@ -15,7 +17,6 @@ const addRoutes = require("./routes/add");
 const coursesRoutes = require("./routes/courses");
 const ordersRoutes = require("./routes/orders");
 const authRoutes = require("./routes/auth");
-const User = require("./models/user");
 const varMiddleware = require("./middleware/variables");
 const userMiddleware = require("./middleware/user");
 
@@ -68,6 +69,10 @@ app.use(
 	})
 );
 //^подключаем свой мидлвэйр
+//-безопасность
+app.use(csurf());
+//-сообщения об ошибках
+app.use(flash());
 app.use(varMiddleware);
 app.use(userMiddleware);
 //! регистрация роутов

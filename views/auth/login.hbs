@@ -8,6 +8,9 @@
     </div>
 
     <div id="login" class="col s6 offset-s3">
+      {{#if loginError}}
+      <p class="alert">{{loginError}}</p>
+      {{/if}}
       <h1>Login account</h1>
       <form action="/auth/login" method="POST">
         <div class="input-field">
@@ -22,12 +25,20 @@
           <span class="helper-text" data-error="Input password"></span>
         </div>
 
+        {{!-- добавляем скрытый инпут для безопасности csurf --}}
+        <input type="hidden" name="_csrf" value="{{csrf}}">
+
         <button class="btn btn-primary" type="submit">Login</button>
       </form>
     </div>
     <div id="register" class="col s6 offset-s3">
+      {{!-- проверяем есть ли ошибки --}}
+      {{#if registerError}}
+      <p class="alert">{{registerError}}</p>
+      {{/if}}
+
       <h1>Register account</h1>
-      <form action="/auth/regiter" method="POST">
+      <form action="/auth/register" method="POST">
         <div class="input-field">
           <input id="remail" type="email" name="email" class="validate" required>
           <label for="remail">Email</label>
@@ -39,11 +50,21 @@
           <label for="rpassword">Password</label>
           <span class="helper-text" data-error="Input password"></span>
         </div>
+
         <div class="input-field">
           <input id="confirm" type="password" name="confirm" class="validate" required>
           <label for="confirm">Confirm password</label>
           <span class="helper-text" data-error="Input password"></span>
         </div>
+
+        <div class="input-field">
+          <input id="name" type="text" name="name" class="validate" required>
+          <label for="name">Your name</label>
+          <span class="helper-text" data-error="Input your name"></span>
+        </div>
+
+        {{!-- добавляем скрытый инпут для безопасности csurf --}}
+        <input type="hidden" name="_csrf" value="{{csrf}}">
 
         <button class="btn btn-primary" type="submit">Register</button>
       </form>

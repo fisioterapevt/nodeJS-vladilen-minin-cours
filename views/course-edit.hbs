@@ -19,9 +19,14 @@
   </div>
   {{!-- для редактирования курса необходино передать уже сформированный id --}}
   <input type="hidden" name="id" value="{{course.id}}">
+  {{!-- добавляем скрытый инпут для безопасности csurf --}}
+  <input type="hidden" name="_csrf" value="{{csrf}}">
+
   <button type="submit" class="btn btn-primary">Save course</button>
 </form>
 <form action="/courses/remove" method="POST">
   <input type="hidden" name="id" value="{{course.id}}">
+  {{!-- добавляем скрытый инпут для безопасности csurf --}}
+  <input type="hidden" name="_csrf" value="{{csrf}}">
   <button class="btn red">Delete course</button>
 </form>
