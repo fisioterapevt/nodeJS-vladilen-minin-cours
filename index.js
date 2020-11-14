@@ -7,6 +7,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongodb-session")(session);
 const Handlebars = require("handlebars");
 const expressHandlebars = require("express-handlebars");
+
 const {
 	allowInsecurePrototypeAccess,
 } = require("@handlebars/allow-prototype-access");
@@ -17,23 +18,29 @@ const addRoutes = require("./routes/add");
 const coursesRoutes = require("./routes/courses");
 const ordersRoutes = require("./routes/orders");
 const authRoutes = require("./routes/auth");
+const profileRoutes = require("./routes/profile");
 const varMiddleware = require("./middleware/variables");
 const userMiddleware = require("./middleware/user");
+const errorMiddleware = require("./middleware/error");
+const fileMiddleware = require("./middleware/file");
 
-const MONGODB_URI =
-	"mongodb+srv://tim:tFfQSVHiKWXry7Lt@cluster0.rj3ex.mongodb.net/shop";
+const keys = require("./keys");
 
 const app = express(); //- сервер
+//-в hendalebars нельзя проверять условие на равенство  например if userId._id === @root.userId --}}
+//-        {{!-- поэтому нужно создать свой собственный в index.js --}}
 const hbs = expressHandlebars.create({
 	defaultLayout: "main",
 	extname: "hbs",
 	handlebars: allowInsecurePrototypeAccess(Handlebars),
+	//- создаем helpers что бы в hendalebars проверять условие на равенство
+	helpers: require("./utils/hbs-helpers"),
 }); //- конфигурация движка handlebars(extname - название расширения, по умолчанию handlebars)
 
 //! Создание хранилища сессий
 const store = new MongoStore({
 	collection: "sessions",
-	uri: MONGODB_URI,
+	uri: keys.MONGODB_URI,
 });
 
 ////! конфигурация движка
@@ -57,18 +64,21 @@ app.set("views", "views");
 //});
 
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/images", express.static(path.join(__dirname, "images")));
+
 app.use(express.urlencoded({ extended: true }));
 
 //^настройка session
 app.use(
 	session({
-		secret: "some secret",
+		secret: keys.SESSION_SECRET,
 		resave: false,
 		saveUninitialized: false,
 		store: store,
 	})
 );
 //^подключаем свой мидлвэйр
+app.use(fileMiddleware.single("avatar"));
 //-безопасность
 app.use(csurf());
 //-сообщения об ошибках
@@ -83,6 +93,10 @@ app.use("/courses", coursesRoutes);
 app.use("/cart", cartRoutes);
 app.use("/orders", ordersRoutes);
 app.use("/auth", authRoutes);
+app.use("/profile", profileRoutes);
+
+//- мидлвэер ошибки подключаем в самом конце что бы приложение проверия все роуты
+app.use(errorMiddleware);
 
 const PORT = process.env.PORT || 3000; //- более гибкое указание порта
 
@@ -90,7 +104,7 @@ const PORT = process.env.PORT || 3000; //- более гибкое указан�
 async function start() {
 	//-обработаем возможные ошибки
 	try {
-		await mongoose.connect(MONGODB_URI, {
+		await mongoose.connect(keys.MONGODB_URI, {
 			useNewUrlParser: true,
 			useFindAndModify: false,
 			useUnifiedTopology: true,

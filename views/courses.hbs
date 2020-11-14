@@ -18,7 +18,14 @@
         {{#if @root.isAuth}}
         {{!-- указываем @root.isAuth чтобы выйти из цикла each  и обратится к корневому значению isAuth --}}
         {{!-- тк иначе isAuth будет искаться в courses а isAuth находится не в courses --}}
+
+        {{!-- в hendalebars нельзя проверять условие на равенство  например if userId._id === @root.userId --}}
+        {{!-- поэтому нужно создать свою функцию для проверки равенства в index.js --}}
+        {{!-- где скрываем кнопку редактирования если id не совпадает --}}
+        {{#ifequal userId._id @root.userId}}
         <a href="/courses/{{id}}/edit?allow=true">Edit</a>
+        {{/ifequal}}
+
         <form action="/cart/add" method="POST">
           {{!-- добавляем скрытый инпут для безопасности csurf --}}
           <input type="hidden" name="_csrf" value="{{@root.csrf}}">

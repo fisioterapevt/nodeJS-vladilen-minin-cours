@@ -29,3 +29,16 @@
 .auth {
 	padding-top: 1rem;
 }
+
+.alert {
+	font-size: 3rem;
+	background-color: red;
+	color: white;
+	text-align: center;
+	border-radius: 10px;
+}
+
+.avatar {
+	max-width: 300px;
+	height: auto;
+}
